@@ -29,6 +29,8 @@ loadSprite("confetti", "sprites/confetti.png");
 
 
 scene ("game", () => {
+    layers(["bg", "obj", "ui"], "obj");
+
     var randomFoodNumber = 0;
     var randomFood = "";
     var randomFoodMissing = "";
@@ -38,6 +40,8 @@ scene ("game", () => {
     var missingItemScale = 1;       
     var foodContainer = "";
     var numberOfFoodItems = 0;
+    var health = 6;
+    var isGameOver = false;
 
 
     function newFoodItem () {
@@ -84,6 +88,13 @@ scene ("game", () => {
             "foodItem",
         ])
     }
+    onUpdate(() => {
+        if (isGameOver == false) {
+            const current = camPos();
+            const newY = lerp(current.y, foodItem.pos.y + 50, 0.05);   
+            camPos(current.x, newY);
+        }
+    })
 
     function addFoodContainer () {
         if (randomFoodNumber <= 3) {
@@ -124,6 +135,46 @@ scene ("game", () => {
         }
     })
 
+    function updateScoreText ()  {
+        destroyAll("scoreText");
+        const score = add([
+            text("Score: " + (numberOfFoodItems - 1), { size: 48 }),
+            pos(250, 20),
+            layer("ui"),
+            fixed(),
+            "scoreText",
+        ])
+    }
+    
+    var combo = 0;
+
+    var randomTextPosX = rand(50, 300);
+    var randomTextPosY = rand(200, 600);
+    
+    onUpdate(() => {
+        randomTextPosX = rand(50, 300);
+        randomTextPosY = rand(200, 600);
+    })
+
+    
+    if (combo == 3 || combo == 6 || combo == 9 || combo == 12) {
+        health++;
+        debug.log("Health: " + health);
+    }
+
+    function addComboText () {
+        combo++;
+        const comboText = add ([
+            text("COMBO x" + combo + " !!", {size: 48}),
+            pos(randomTextPosX, randomTextPosY),
+            opacity(1),
+            z(10),
+            layer("ui"),
+            fixed(),
+            lifespan(1, { fade: 0.5 }),
+        ])
+    }
+
     var foodItem = "";
     newFoodItem();
     addFoodContainer();
@@ -152,12 +203,37 @@ scene ("game", () => {
             randomFoodNumber = randi(6);
             foodItemSpeed += 25;
             newFoodItem();
+            updateScoreText();
+            addComboText();
             // winParticleEmitter.emit(15);
         } else {
+            combo = 0;
+            health--;
+            debug.log("Health: " + health);
             debug.log("booo");
+            
+            if (health <= 0) {
+            isGameOver = true;
+            onUpdate(() => {
+                const current = camPos();
+                const newY = lerp(current.y, 625, 0.02);   
+                camPos(current.x, newY);
+                wait(3.5, () => {
+                    go("gameover");
+                })
+            })
+        }
         }
     })
+
 })
+
+scene ("gameover", () => { 
+    add([
+        text("yo", {size: 64}),
+        pos(center()),
+    ])
+});
 
 
 go("game");
