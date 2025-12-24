@@ -4,8 +4,8 @@ import "kaplay/global";
 kaplay();
 
 loadRoot("./"); 
-loadSprite("bean", "sprites/bean.png");
+loadSprite("icecream_vanilla", "sprites/icecream_vanilla.png");
 
-add([pos(120, 80), sprite("bean")]);
+add([pos(120, 80), sprite("icecream_vanilla")]);
 
 onClick(() => addKaboom(mousePos()));
