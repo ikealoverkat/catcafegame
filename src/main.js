@@ -130,6 +130,21 @@ scene ("game", () => {
 
     var foodItemClickPosX = 0;
 
+    // let winParticleEmitter = add([
+    //     pos(center()),
+    //     particles (
+    //         {
+    //             max: 20,
+    //             speed: [50, 50],
+    //             lifeTime: [0.2, 0.5],
+    //         }, //particles options (particleOpt)
+    //         {
+    //             direction: 0,
+    //             spread: 45,
+    //         } //emiitter options (emitterOpt)
+    //     )
+    // ])
+
     onClick(() => {
         if (Math.abs(foodItem.pos.x - missingItem.pos.x) <= 30) {
             foodItemClickPosX = foodItem.pos.x;
@@ -137,20 +152,8 @@ scene ("game", () => {
             randomFoodNumber = randi(6);
             foodItemSpeed += 25;
             newFoodItem();
+            // winParticleEmitter.emit(15);
         } else {
-                const winConfetti = add([
-                    pos(foodItem.pos.x, foodItem.pos.y),
-                    particles({
-                        max: 50,
-                        speed: [75, 100],
-                        lifetime: [0.75,1.0],
-                        angle: [0, 360],
-                        opacities: [1.0, 0.5],
-                        texture: getSprite("confetti"),
-                        colors: [rgb(255, 0, 0), rgb(0, 255, 0), rgb(0, 0, 255)],
-                    }),
-                lifespan(1.1),
-                ])
             debug.log("booo");
         }
     })
