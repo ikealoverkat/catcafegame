@@ -25,6 +25,8 @@ loadSprite("plate", "sprites/plate.png");
 loadSprite("cup", "sprites/cup.png");
 loadSprite("takeoutbag", "sprites/takeoutbag.png");
 
+loadSprite("confetti", "sprites/confetti.png");
+
 
 scene ("game", () => {
     var randomFoodNumber = 0;
@@ -35,9 +37,11 @@ scene ("game", () => {
     var missingItemY = 600;
     var missingItemScale = 1;       
     var foodContainer = "";
+    var numberOfFoodItems = 0;
 
 
     function newFoodItem () {
+        numberOfFoodItems++;
         randomFoodNumber = randi(6);    
 
         if (randomFoodNumber == 0) {randomFood = "icecream_vanilla";}
@@ -50,25 +54,26 @@ scene ("game", () => {
         if (randomFoodNumber <= 3) {
             randomFoodMissing = "icecream_missing";
             missingItemX = 135;
-            missingItemY = 625;
+            missingItemY = 625 - (numberOfFoodItems * 100);
             missingItemScale = 0.45;
             foodContainer = "cup";
         } 
         else {
         randomFoodMissing = "donut_missing";
             missingItemX = 175;
-            missingItemY = 650; 
+            missingItemY = 650 - (numberOfFoodItems * 100); 
             missingItemScale = 0.6;   
             foodContainer = "plate";
         }
 
-        destroyAll("foodItem");
-        destroy(missingItem);
+        // destroyAll("foodItem");
+        destroyAll("missingItem");
 
         missingItem = add([
             pos(missingItemX, missingItemY),
             sprite(randomFoodMissing),
             scale(missingItemScale),
+            "missingItem",
         ])
         
         foodItem = add([
@@ -79,22 +84,26 @@ scene ("game", () => {
             "foodItem",
         ])
     }
-    
 
-    // if (randomFoodNumber == 4 || randomFoodNumber == 5) {
-    //     missingItemX = 175;
-    //     missingItemY = 650; 
-    //     missingItemScale = 0.6;   
-    //     foodContainer = "plate";
-    // } else {
-    //     missingItemX = 135;
-    //     missingItemY = 625;
-    //     missingItemScale = 0.45;
-    //     foodContainer = "cup";
-    // }
+    function addFoodContainer () {
+        if (randomFoodNumber <= 3) {
+            add([
+                sprite("cup"),
+                pos(missingItemX - 10, missingItemY + 50),
+                z(-10),
+                scale(missingItemScale + 0.25),
+            ])
+        } //cup
+        if (randomFoodNumber > 3) {
+            add([
+                sprite("plate"),
+                pos(missingItemX - 60, missingItemY),
+                z(-10),
+                scale(missingItemScale + 0.1),
+            ])
+        } //plate
+    }
 
-
-    
     // var foodContainerItem = add([
     //     pos(missingItemX - 10, missingItemY + 50),
     //     sprite(foodContainer),
@@ -115,22 +124,33 @@ scene ("game", () => {
         }
     })
 
-    // for (let i = 0; i < 380; i++) {
-    //     foodItem.move(foodItemDir, 120);
-    //     foodItemDir = RIGHT;
-    // } 
-
     var foodItem = "";
     newFoodItem();
+    addFoodContainer();
+
+    var foodItemClickPosX = 0;
 
     onClick(() => {
         if (Math.abs(foodItem.pos.x - missingItem.pos.x) <= 30) {
-            destroy(foodItem);
+            foodItemClickPosX = foodItem.pos.x;
             debug.log("yay");
             randomFoodNumber = randi(6);
             foodItemSpeed += 25;
             newFoodItem();
         } else {
+                const winConfetti = add([
+                    pos(foodItem.pos.x, foodItem.pos.y),
+                    particles({
+                        max: 50,
+                        speed: [75, 100],
+                        lifetime: [0.75,1.0],
+                        angle: [0, 360],
+                        opacities: [1.0, 0.5],
+                        texture: getSprite("confetti"),
+                        colors: [rgb(255, 0, 0), rgb(0, 255, 0), rgb(0, 0, 255)],
+                    }),
+                lifespan(1.1),
+                ])
             debug.log("booo");
         }
     })
