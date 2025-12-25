@@ -12,10 +12,12 @@ loadRoot("./");
 loadSprite("logo", "ui/logo.png")
 loadSprite("heart", "ui/heart.png");
 loadFont("madeTommySoft", "ui/madeTommySoft.otf");
+loadSprite("play", "ui/play.png")
 
 loadSprite("confetti", "effects/confetti.png");
 loadSprite("red", "effects/red.png");
 loadSprite("black", "effects/black.png");
+loadSprite("white", "effects/white.png");
 
 loadSprite("bg", "sprites/bg.png");
 loadSprite("table", "sprites/table.png");
@@ -35,11 +37,59 @@ loadSprite("plate", "sprites/plate.png");
 loadSprite("cup", "sprites/cup.png");
 loadSprite("takeoutbag", "sprites/takeoutbag.png");
 
+loadMusic("bgm", "sounds/gameOST.mp3");
+loadSound("gameoverSound", "sounds/gameover.mp3");
+loadSound("bad", "sounds/bad.mp3");
+loadSound("good", "sounds/good.mp3");
+
+const page = document.getElementById("page");
+const canvas = document.querySelector("canvas");
+page.appendChild(canvas);
 
 var numberOfFoodItems = 0;
+layers(["bg", "obj", "ui"], "obj");
+
+const music = play("bgm", { volume: 0.1, loop: true });
+
+scene("pausedgame", () => {
+    add([
+        sprite("white"),
+        pos(0,0),
+        opacity(0.5),
+        z(1)
+    ])
+    const play = add([
+        sprite("play"),
+        pos(center()),
+        z(2),
+        area(),
+        scale(0.2),
+        anchor("center"),
+        "play",
+    ])
+
+    onClick("play", () => {
+        play.scale = vec2(0.19, 0.19)
+        wait(0.05, () => {
+            play.scale = vec2(0.21, 0.21)
+            wait(0.05, () => {
+                play.scale = vec2(0.2, 0.2)
+                wait(0.05, () => {
+                    go("game")
+                })
+            })
+        })
+    })
+
+    add([
+        sprite("bg"),
+    ])
+})
 
 scene ("game", () => {
-    layers(["bg", "obj", "ui"], "obj");
+    setVolume(0.5);
+
+    music.paused = false;
 
     var randomFoodNumber = 0;
     var randomFood = "";
@@ -238,6 +288,7 @@ scene ("game", () => {
 
     onClick(() => {
         if (Math.abs(foodItem.pos.x - missingItem.pos.x) <= 30) {
+            play("good");
             foodItemClickPosX = foodItem.pos.x;
             // debug.log("yay");
             randomFoodNumber = randi(6);
@@ -262,6 +313,7 @@ scene ("game", () => {
                 })
             })
         } else {
+            play("bad");
             combo = 0;
             health--;
             add([
@@ -303,6 +355,8 @@ scene ("game", () => {
 })
 
 scene ("gameover", () => { 
+    play("gameoverSound");
+    music.paused = true;
 
     let black = add([
         sprite("black"),
@@ -311,6 +365,7 @@ scene ("gameover", () => {
         pos(0, 0),
         opacity(0),
         animate(),
+        z(20),
     ])
     
     tween(1, 0, 1, (v) => black.opacity = v, easings.linear);
@@ -340,6 +395,21 @@ scene ("gameover", () => {
     ]) //text shadow    
 
     add([
+        text("click anywhere to replay", {size: 32, font: "madeTommySoft"}),
+        pos(205, 370),
+    ]) //text
+
+    add([
+        text("click anywhere to replay", {size: 32, font: "madeTommySoft"}),
+        pos(208, 373),
+        color(0,0,0),
+        opacity(0.5),
+        z(-10),
+    ]) //text shadow
+
+
+
+    add([
         sprite("bg"),
         layer("bg"),
         pos(0,0),
@@ -358,16 +428,24 @@ scene ("gameover", () => {
         sprite("takeoutbag"),
         pos(260, 590),
         scale(0.65),
+        animate(),
     ])
+
+   
 
     add([
         sprite("happycustomer"),
-        pos(20, 400),
+        pos(20, 430),
         scale(0.5),
         z(-11),
     ])
 
+    onClick(() => {
+        numberOfFoodItems = 0;
+        go("game");
+    })
+
 });
 
 
-go("game");
+go("pausedgame");

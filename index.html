@@ -2,8 +2,75 @@
 <html>
 <head>
 <title>catcafegame</title>
+<style>
+    @font-face {
+        font-family: madeTommySoft;
+        src: url('ui/madeTommySoft.otf');
+    }
+
+    canvas {
+        box-shadow: 8px 8px 32px 0px rgba(0,0,0, 0.5);
+        display: block;
+        border-radius: 48px;
+    }
+    body {
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        background-image: url('ui/staticsitebackground.png');
+    }
+    .divwithstuff {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5vh;
+        align-items: center;
+        background-color: #ffffffb4;
+        margin: 4vh;
+        border-radius: 48px;
+    }
+    .logo {
+        width: 50vh;
+        height: 40vh;
+    }
+    #page {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+    }
+
+    h1 {
+        font-family: madeTommySoft;
+        font-size: 48px;
+        margin: 0;
+        color: #a5554f;
+    }
+
+    h2 {
+        font-family: madeTommySoft;
+        font-size: 28px;
+        margin: 0.5vh;
+        color: #562d2a;
+    }
+    p {
+        font-family: madeTommySoft;
+        font-size: 20px;
+        color: #a5554f;
+    }
+</style>
 </head>
-<body style="overflow:hidden; align-items: center; justify-content: center; display: flex;">
+<body>
+<div id="page">
+    <div class="divwithstuff">
+            <img src="ui/logo.png" class="logo">
+        <h1>happy holidays lim!!!!</h1>
+        <h2>click on the button to start the game! <br> see how many cat snacks u can stack!</h2>
+        <p>from kat ^_^ (@kook on slack)</p>
+    </div>
+</div>
+
 <script src="src/main.js" type="module"></script>
 </body>
 </html>
