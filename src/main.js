@@ -6,10 +6,14 @@ kaplay({
     height: 1024,
 });
 
-debug.inspect = true;
+// debug.inspect = true;
 
 loadRoot("./"); 
 loadSprite("logo", "ui/logo.png")
+loadSprite("heart", "ui/heart.png");
+
+loadSprite("confetti", "effects/confetti.png");
+loadSprite("red", "effects/red.png");
 
 loadSprite("icecream_vanilla", "sprites/icecream_vanilla.png");
 loadSprite("icecream_strawberry", "sprites/icecream_strawberry.png");
@@ -25,8 +29,6 @@ loadSprite("plate", "sprites/plate.png");
 loadSprite("cup", "sprites/cup.png");
 loadSprite("takeoutbag", "sprites/takeoutbag.png");
 
-loadSprite("confetti", "sprites/confetti.png");
-
 
 scene ("game", () => {
     layers(["bg", "obj", "ui"], "obj");
@@ -40,10 +42,25 @@ scene ("game", () => {
     var missingItemScale = 1;       
     var foodContainer = "";
     var numberOfFoodItems = 0;
-    var health = 6;
+    var health = 5;
     var isGameOver = false;
 
+    function updateHearts () {
+        destroyAll("heart");
+        for (let i = 0; i < health; i++) {
+            add([
+                sprite("heart"),
+                pos(20 + (i * 40), 20),
+                scale(0.05),
+                layer("ui"),
+                fixed(),
+                "heart",
+            ])
+        }
+    }
 
+    updateHearts();
+    
     function newFoodItem () {
         numberOfFoodItems++;
         randomFoodNumber = randi(6);    
@@ -139,7 +156,7 @@ scene ("game", () => {
         destroyAll("scoreText");
         const score = add([
             text("Score: " + (numberOfFoodItems - 1), { size: 48 }),
-            pos(250, 20),
+            pos(500, 35),
             layer("ui"),
             fixed(),
             "scoreText",
@@ -156,15 +173,16 @@ scene ("game", () => {
         randomTextPosY = rand(200, 600);
     })
 
-    
-    if (combo == 3 || combo == 6 || combo == 9 || combo == 12) {
-        health++;
-        debug.log("Health: " + health);
-    }
-
     function addComboText () {
         combo++;
-        const comboText = add ([
+        
+        if (combo == 3 || combo == 6 || combo == 9 || combo == 12) {
+            health++;
+            updateHearts();
+            // debug.log("Health: " + health);
+        }
+        
+        add ([
             text("COMBO x" + combo + " !!", {size: 48}),
             pos(randomTextPosX, randomTextPosY),
             opacity(1),
@@ -199,18 +217,42 @@ scene ("game", () => {
     onClick(() => {
         if (Math.abs(foodItem.pos.x - missingItem.pos.x) <= 30) {
             foodItemClickPosX = foodItem.pos.x;
-            debug.log("yay");
+            // debug.log("yay");
             randomFoodNumber = randi(6);
             foodItemSpeed += 25;
             newFoodItem();
             updateScoreText();
             addComboText();
-            // winParticleEmitter.emit(15);
+            add([
+                sprite("confetti"),
+                layer("ui"),
+                fixed(),
+                pos(0,0),
+                scale(1.5),
+                opacity(0.5),
+                lifespan(0, { fade: 0.5 }),
+            ])
+            foodItem.scale = vec2(missingItemScale - 0.01, missingItemScale - 0.01);
+            wait(0.05, () => {
+                foodItem.scale = vec2(missingItemScale + 0.01, missingItemScale + 0.01);
+                wait(0.05, () => {
+                    foodItem.scale = vec2(missingItemScale, missingItemScale);
+                })
+            })
         } else {
             combo = 0;
             health--;
-            debug.log("Health: " + health);
-            debug.log("booo");
+            add([
+                sprite("red"),
+                layer("ui"),
+                fixed(),
+                pos(0, 0),
+                opacity(0.5),
+                lifespan(0, { fade: 0.5 }),
+            ])
+            shake(5);
+            // debug.log("Health: " + health);
+            // debug.log("booo");
             
             if (health <= 0) {
             isGameOver = true;
@@ -222,7 +264,8 @@ scene ("game", () => {
                     go("gameover");
                 })
             })
-        }
+            }
+        updateHearts();
         }
     })
 
