@@ -11,6 +11,7 @@ kaplay({
 loadRoot("./"); 
 loadSprite("logo", "ui/logo.png")
 loadSprite("heart", "ui/heart.png");
+loadFont("madeTommySoft", "ui/madeTommySoft.otf");
 
 loadSprite("confetti", "effects/confetti.png");
 loadSprite("red", "effects/red.png");
@@ -132,12 +133,6 @@ scene ("game", () => {
         } //plate
     }
 
-    // var foodContainerItem = add([
-    //     pos(missingItemX - 10, missingItemY + 50),
-    //     sprite(foodContainer),
-    //     scale(missingItemScale + 0.1),
-    // ]) //boi just code this later
-
     var foodItemDir = 1; //right
     var foodItemSpeed = 240;
 
@@ -154,13 +149,23 @@ scene ("game", () => {
 
     function updateScoreText ()  {
         destroyAll("scoreText");
-        const score = add([
-            text("Score: " + (numberOfFoodItems - 1), { size: 48 }),
-            pos(500, 35),
+        add([
+            text("Score: " + (numberOfFoodItems - 1), { size: 48, font: "madeTommySoft" }),
+            pos(525, 35),
             layer("ui"),
             fixed(),
             "scoreText",
-        ])
+        ]) //main text
+        add([
+            text("Score: " + (numberOfFoodItems - 1), { size: 48, font: "madeTommySoft"}),
+            pos(528, 38),
+            layer("ui"),
+            color(0,0,0),
+            z(-10),
+            fixed(),
+            opacity(0.75),
+            "scoreText",
+        ]) //shadow
     }
     
     var combo = 0;
@@ -183,14 +188,25 @@ scene ("game", () => {
         }
         
         add ([
-            text("COMBO x" + combo + " !!", {size: 48}),
+            text("COMBO x" + combo + " !!", {size: 48, font: "madeTommySoft"}),
             pos(randomTextPosX, randomTextPosY),
             opacity(1),
             z(10),
             layer("ui"),
             fixed(),
             lifespan(1, { fade: 0.5 }),
-        ])
+        ]) //main
+
+        add ([
+            text("COMBO x" + combo + " !!", {size: 48, font: "madeTommySoft"}),
+            pos(randomTextPosX+3, randomTextPosY+3),
+            z(9),
+            opacity(0.75),
+            color(0,0,0),
+            layer("ui"),
+            fixed(),
+            lifespan(1, { fade: 0.5 }),
+        ]) //shadow
     }
 
     var foodItem = "";
@@ -198,21 +214,6 @@ scene ("game", () => {
     addFoodContainer();
 
     var foodItemClickPosX = 0;
-
-    // let winParticleEmitter = add([
-    //     pos(center()),
-    //     particles (
-    //         {
-    //             max: 20,
-    //             speed: [50, 50],
-    //             lifeTime: [0.2, 0.5],
-    //         }, //particles options (particleOpt)
-    //         {
-    //             direction: 0,
-    //             spread: 45,
-    //         } //emiitter options (emitterOpt)
-    //     )
-    // ])
 
     onClick(() => {
         if (Math.abs(foodItem.pos.x - missingItem.pos.x) <= 30) {
@@ -251,8 +252,6 @@ scene ("game", () => {
                 lifespan(0, { fade: 0.5 }),
             ])
             shake(5);
-            // debug.log("Health: " + health);
-            // debug.log("booo");
             
             if (health <= 0) {
             isGameOver = true;
