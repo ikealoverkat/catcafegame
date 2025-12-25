@@ -1,27 +1,16 @@
-# Folder structure
+# happy holidays lim!!!!
 
-- `src` - source code for your kaplay project
-- `dist` - distribution folder, contains your index.html, built js bundle and static assets
+this is my giftbox project, a gift to lim :D
 
+giftbox is a hackclub program! it's like secret santa but u make eachother silly websites, games, etc. ^_^
 
-## Development
+learn more about giftbox [here](https://giftbox.hackclub.com/)
 
-```sh
-$ npm run dev
-```
+anyways if ur reading this lim i hope u like my game for u!!!! have fun!!
 
-will start a dev server at http://localhost:8000
+## game description
+you are a worker at a cat-themed cafe! stack as much donuts and ice cream as u can to make customers happy :P when u get the timing right, u can stack more and more snacks! when u get the timing wrong, ragebait gets to u and u give up lol
 
-## Distribution
+again, have fun ^_^
 
-```sh
-$ npm run build
-```
-
-will build your js files into `dist/`
-
-```sh
-$ npm run zip
-```
-
-will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
+made with <3 by kat wang (2025)
