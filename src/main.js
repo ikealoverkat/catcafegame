@@ -15,6 +15,11 @@ loadFont("madeTommySoft", "ui/madeTommySoft.otf");
 
 loadSprite("confetti", "effects/confetti.png");
 loadSprite("red", "effects/red.png");
+loadSprite("black", "effects/black.png");
+
+loadSprite("bg", "sprites/bg.png");
+loadSprite("table", "sprites/table.png");
+loadSprite("happycustomer", "sprites/happycustomer.png");
 
 loadSprite("icecream_vanilla", "sprites/icecream_vanilla.png");
 loadSprite("icecream_strawberry", "sprites/icecream_strawberry.png");
@@ -31,6 +36,8 @@ loadSprite("cup", "sprites/cup.png");
 loadSprite("takeoutbag", "sprites/takeoutbag.png");
 
 
+var numberOfFoodItems = 0;
+
 scene ("game", () => {
     layers(["bg", "obj", "ui"], "obj");
 
@@ -42,9 +49,23 @@ scene ("game", () => {
     var missingItemY = 600;
     var missingItemScale = 1;       
     var foodContainer = "";
-    var numberOfFoodItems = 0;
     var health = 5;
     var isGameOver = false;
+
+    add([
+        sprite("bg"),
+        layer("bg"),
+        pos(0,0),
+        fixed(),
+        z(-25),
+    ])
+
+    add([
+        sprite("table"),
+        pos(0, 750),
+        scale(1.5, 1.5),
+        z(-10),
+    ])
 
     function updateHearts () {
         destroyAll("heart");
@@ -259,8 +280,19 @@ scene ("game", () => {
                 const current = camPos();
                 const newY = lerp(current.y, 625, 0.02);   
                 camPos(current.x, newY);
-                wait(3.5, () => {
+                wait(3, () => {
+                let black = add([
+                    sprite("black"),
+                    layer("ui"),
+                    fixed(),
+                    pos(0, 0),
+                    opacity(0),
+                    animate(),
+                ])
+                tween(0, 1, 1, (v) => black.opacity = v, easings.linear);
+                wait(0.5, () => {
                     go("gameover");
+                })
                 })
             })
             }
@@ -271,10 +303,70 @@ scene ("game", () => {
 })
 
 scene ("gameover", () => { 
-    add([
-        text("yo", {size: 64}),
-        pos(center()),
+
+    let black = add([
+        sprite("black"),
+        layer("ui"),
+        fixed(),
+        pos(0, 0),
+        opacity(0),
+        animate(),
     ])
+    
+    tween(1, 0, 1, (v) => black.opacity = v, easings.linear);
+    
+    add([
+        text("yum!", {size: 64, font: "madeTommySoft"}),
+        pos(315, 255),
+    ]) //text
+    add([
+        text("yum!", {size: 64, font: "madeTommySoft"}),
+        pos(319, 259),
+        color(0,0,0),
+        opacity(0.5),
+        z(-10),
+    ]) //text shadow
+
+    add([
+        text("you collected " + (numberOfFoodItems - 1) + " foods!", {size: 48, font: "madeTommySoft"}),
+        pos(125, 320),
+    ]) //text
+    add([
+        text("you collected " + (numberOfFoodItems - 1) + " foods!", {size: 48, font: "madeTommySoft"}),
+        pos(129, 324),
+        color(0,0,0),
+        opacity(0.5),
+        z(-10),
+    ]) //text shadow    
+
+    add([
+        sprite("bg"),
+        layer("bg"),
+        pos(0,0),
+        fixed(),
+        z(-25),
+    ])
+
+    add([
+        sprite("table"),
+        pos(0, 750),
+        scale(1.5, 1.5),
+        z(-10),
+    ])
+
+    add([
+        sprite("takeoutbag"),
+        pos(260, 590),
+        scale(0.65),
+    ])
+
+    add([
+        sprite("happycustomer"),
+        pos(20, 400),
+        scale(0.5),
+        z(-11),
+    ])
+
 });
 
 
